@@ -1,4 +1,4 @@
-binary "https://www.kiazenenterprises.org:8443/json/11.5b11E608c/Alamofire" "4.8.2"
-binary "https://www.kiazenenterprises.org:8443/json/11.5b11E608c/Cadmus" "1.0.7"
-binary "https://www.kiazenenterprises.org:8443/json/11.5b11E608c/HttpEngineCore" "0.0.13"
-binary "https://www.kiazenenterprises.org:8443/json/11.5b11E608c/Hydra" "2.0.3"
+binary "https://www.kiazenenterprises.org:8443/json/12.0b12A8189n/Alamofire" "4.8.0"
+binary "https://www.kiazenenterprises.org:8443/json/12.0b12A8189n/Cadmus" "1.0.7"
+binary "https://www.kiazenenterprises.org:8443/json/12.0b12A8189n/HttpEngineCore" "0.0.13"
+binary "https://www.kiazenenterprises.org:8443/json/12.0b12A8189n/Hydra" "2.0.3"
