@@ -1,2 +1,2 @@
 xcodebuild -version
-time carthage update --configuration Debug
+time /Users/swhitehead/.local/.bin/carthage update --configuration Debug
