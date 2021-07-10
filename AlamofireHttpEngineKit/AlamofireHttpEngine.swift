@@ -217,7 +217,7 @@ public class AlamofireHttpEngine: HttpEngine {
 	}
 	
 	internal func execute(using method: HTTPMethod, formData: [MultipartFormItem]) -> Promise<RequestResponse> {
-		return firstly(on: dispatchQueue) { (seal) in
+		return Promise<RequestResponse> { resolver in
 			log(debug: """
 				
 				\tmethod: \(method) to \(self.url)
@@ -233,19 +233,19 @@ public class AlamofireHttpEngine: HttpEngine {
 					case .success(let request, _, _):
 						
 						self.execute(request).done { (response) in
-							seal.fulfill(response)
+							resolver.fulfill(response)
 						}.catch { (error) in
-							seal.reject(error)
+							resolver.reject(error)
 						}
 					case .failure(let error):
-						seal.reject(error)
+						resolver.reject(error)
 					}
 			}
 		}
 	}
 		
 	internal func execute(_ request: UploadRequest) -> Promise<RequestResponse> {
-		return firstly(on: dispatchQueue) { (seal) in
+		return Promise<RequestResponse> { resolver in
 			request.authenticate(with: self.credentials)
 				//.validate()
 				.debugLog()
@@ -256,13 +256,13 @@ public class AlamofireHttpEngine: HttpEngine {
 					self.progressMonitor?(progress.fractionCompleted)
 			}.responseData(queue: AlamofireHttpEngine.processQueue,
 										 completionHandler: { (response) in
-											self.process(response, resolver: seal)
+											self.process(response, resolver: resolver)
 			})
 		}
 	}
 	
 	internal func execute(_ request: DataRequest) -> Promise<RequestResponse> {
-		return firstly(on: dispatchQueue) { (seal) in
+		return Promise<RequestResponse> { resolver in
 			request.authenticate(with: self.credentials)
 				.debugLog()
 				//.validate()
@@ -270,7 +270,7 @@ public class AlamofireHttpEngine: HttpEngine {
 					self.progressMonitor?(progress.fractionCompleted)
 			}.responseData(queue: AlamofireHttpEngine.processQueue,
 										 completionHandler: { (response) in
-											self.process(response, resolver: seal)
+											self.process(response, resolver: resolver)
 			})
 		}
 	}
