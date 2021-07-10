@@ -73,13 +73,14 @@ public class AlamofireHttpEngine: HttpEngine {
 	let progressMonitor: ProgressMonitor?
 	private(set) var timeout: TimeInterval = 30
 	
-	let dispatchQueue: DispatchQueue
+//	let dispatchQueue: DispatchQueue
 	
 	internal lazy var session: SessionManager = {
 		let sessionConfig = URLSessionConfiguration.default
 		sessionConfig.timeoutIntervalForRequest = timeout
 		sessionConfig.timeoutIntervalForResource = timeout * 10
 		sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
+		sessionConfig.waitsForConnectivity = true
 		
 		let sessionManager = SessionManager(configuration: sessionConfig)
 		return sessionManager
@@ -90,7 +91,7 @@ public class AlamofireHttpEngine: HttpEngine {
 			 headers: [String: String]? = nil,
 			 credentials: HttpEngineCore.Credentials? = nil,
 			 timeout: TimeInterval? = nil,
-			 dispatchQueue: DispatchQueue = DispatchQueue.global(qos: .userInitiated),
+//			 dispatchQueue: DispatchQueue = DispatchQueue.global(qos: .userInitiated),
 			 progressMonitor: ProgressMonitor?) {
 		self.url = url
 		self.headers = headers
@@ -100,7 +101,7 @@ public class AlamofireHttpEngine: HttpEngine {
 			self.timeout = requestTimeout
 		}
 		self.progressMonitor = progressMonitor
-		self.dispatchQueue = dispatchQueue
+//		self.dispatchQueue = dispatchQueue
 	}
 	
 	func process(_ response: DataResponse<Data>, resolver: Resolver<RequestResponse>) {
@@ -132,7 +133,7 @@ public class AlamofireHttpEngine: HttpEngine {
 	}
 
   func execute(method: HTTPMethod) -> Promise<RequestResponse> {
-		return firstly(on: dispatchQueue) { (seal) in
+		return Promise<RequestResponse> { resolver in
 			log(debug: """
 
 				\t\(method): \(self.url)
@@ -149,13 +150,13 @@ public class AlamofireHttpEngine: HttpEngine {
 					self.progressMonitor?(progress.fractionCompleted)
 			}.responseData(queue: AlamofireHttpEngine.processQueue,
 										 completionHandler: { (response) in
-											self.process(response, resolver: seal)
+											self.process(response, resolver: resolver)
 			})
 		}
   }
   
   func execute(data: Data, method: HTTPMethod) -> Promise<RequestResponse> {
-		return firstly(on: dispatchQueue) { (seal) in
+		return Promise<RequestResponse> { resolver in
 			log(debug: """
 				
 				\t\(method) to \(self.url)
@@ -174,7 +175,7 @@ public class AlamofireHttpEngine: HttpEngine {
 					self.progressMonitor?(progress.fractionCompleted)
 			}.responseData(queue: AlamofireHttpEngine.processQueue,
 										 completionHandler: { (response) in
-											self.process(response, resolver: seal)
+											self.process(response, resolver: resolver)
 			})
 		}
   }
